@@ -4,7 +4,8 @@ import HomePage from "./pages/HomePage";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import MainPage from "./pages/mainPage";
-
+import Loading from "./pages/Loading";
+import ProtectdRoute from "./routes/ProtectedRoute";
 function App() {
   return (
     <Router>
@@ -14,7 +15,15 @@ function App() {
         <Route exact path="/" element={<HomePage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/mainpage" element={<MainPage />} />       {" "}
+        <Route
+          path="/mainpage"
+          element={
+            <ProtectdRoute>
+              <MainPage />
+            </ProtectdRoute>
+          }
+        />
+                {/* <Route path="/loading" element={<Loading />} /> */}
       </Routes>
          {" "}
     </Router>

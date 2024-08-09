@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import aiLogo from "../assets/aiLogo.png";
 import Signup from "./Signup";
 import Login from "./Login";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/user";
+// import { useNavigate } from "react-router-dom";
 function HomePage() {
+  const state = useAuth();
+  const navigate = useNavigate();
   const [showsSignup, setShowSignup] = useState(false);
   const [showsLogin, setShowLogin] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleSignupBtnClick = () => {
     setShowSignup(true);
@@ -26,7 +30,13 @@ function HomePage() {
   const handleLoginClose = () => {
     setShowLogin(false);
   };
-
+  useEffect(() => {
+    if (state.loading == false) {
+      if (state.success) {
+        navigate("/mainpage");
+      }
+    }
+  }, [state]);
   return (
     <div>
       {!showsSignup && !showsLogin && (

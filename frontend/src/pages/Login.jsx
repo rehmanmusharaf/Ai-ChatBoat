@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import aiLogo from "../assets/aiLogo.png";
 import axios from "axios";
+import { useAuth } from "../context/user";
 const serverUrl = import.meta.env.VITE_APP_SERVER;
 
 function Login() {
   const navigate = useNavigate();
+  const [state, setState] = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const handleLoginSubmit = async () => {
@@ -19,9 +21,12 @@ function Login() {
         { withCredentials: true }
       );
       console.log("response is:", data);
+      setState((prev) => {
+        return { ...prev, user: data?.user, success: true };
+      });
       // Perform login logic (await if needed)
       // Example
-      // navigate('/mainpage'); // Navigate to /mainpage on successful login
+      navigate("/mainpage"); // Navigate to /mainpage on successful login
     } catch (error) {
       console.error("Login failed:", error);
     }

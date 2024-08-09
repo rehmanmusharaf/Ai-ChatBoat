@@ -4,10 +4,10 @@ const bcrypt = require("bcrypt");
 const collection = require("./baseconnect");
 const cors = require("cors"); // Require the 'cors' module
 const sendToken = require("./utils/sendtoken");
-const { default: runChat } = require("./config/gemini");
-// Create Express application
+const runChat = require("./config/gemini");
+const { isAuthenticated } = require("./middleware/auth");
 const app = express();
-
+const cookieParser = require("cookie-parser");
 require("dotenv").config(); // Define CORS options
 // const corsOptions = {
 //   origin: "http://localhost:5173", // Allow requests from this origin
@@ -15,13 +15,19 @@ require("dotenv").config(); // Define CORS options
 //   allowedHeaders: ["Content-Type", "Authorization"], // Allow these headers
 //   optionsSuccessStatus: 200, // Legacy support for certain browsers
 // };
+
+app.use(cookieParser()); // Add this line to enable cookie parsing
 const corsOptions = {
-  origin: "http://localhost:5173", // Replace with your frontend origin
+  origin: process.env.FRONTEND_URL, // Replace with your frontend origin
   credentials: true, // Allow credentials (cookies) to be sent
 };
 // Use CORS middleware with options
 app.use(cors(corsOptions));
-
+const omit = (obj, ...keys) => {
+  const result = { ...obj };
+  keys.forEach((key) => delete result[key]);
+  return result;
+};
 // Serve static files from the "frontend" directory
 // app.use(
 //   express.static(path.join(__dirname, "C:UsershpDesktopChatApp\frontend"))
@@ -81,7 +87,7 @@ app.post("/login", async (req, res) => {
     };
 
     // Insert the new user document into the collection
-    const user = await collection.findOne({ name: email });
+    let user = await collection.findOne({ name: email });
     // console.log("user is:", user);
     if (!user) {
       return res
@@ -97,6 +103,7 @@ app.post("/login", async (req, res) => {
         .status(401)
         .json({ success: false, message: "Invalid Credentials" });
     }
+    user = { _id: user._id, name: user.name };
     sendToken(user, 200, res);
     // console.log("User registered successfully:", result);
     // res.status(200).send({success:true,message:"User logged in Successfully!"});
@@ -105,13 +112,45 @@ app.post("/login", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
-app.post("/api/gemini", (req, res) => {
+app.post("/api/gemini", isAuthenticated, (req, res) => {
   try {
-    runChat(req.body.prompt);
-  } catch (error) {}
+    // console.log("gemini end point ans req.body.prompt iis", req.body.prompt);
+    runChat(res, req.body.prompt);
+  } catch (error) {
+    return res.status(200).json({ success: false, message: error.message });
+  }
 });
+app.get("/api/getuser", isAuthenticated, (req, res) => {
+  try {
+    // const userWithoutPassword = omit(req.user, "password");
+    // console.log("userwithout pass", req.user);
+    return res.status(200).json({
+      success: true,
+      user: { _id: req.user._id, name: req.user.name },
+    });
+  } catch (error) {
+    return res.status(200).json({ success: false, message: error.message });
+  }
+});
+
+app.get("/user/logout", isAuthenticated, (req, res, next) => {
+  try {
+    res.cookie("token", null, {
+      expires: new Date(0),
+      httpOnly: true,
+    });
+    res
+      .status(200)
+      .json({ success: true, messaage: "User Logout Successfully!" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Somethinng Went Wrong ", error });
+  }
+});
+
 // Start the server
 const port = 5000;
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on ${process.env.FRONTEND_URL}:${port}`);
 });

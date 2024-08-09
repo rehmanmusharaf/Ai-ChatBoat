@@ -5,9 +5,30 @@ import { CiCirclePlus, CiSettings } from "react-icons/ci";
 import { IoIosLogOut } from "react-icons/io";
 import { useContext } from "react";
 import { Context } from "../context/Context";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+const serverUrl = import.meta.env.VITE_APP_SERVER;
 
 function SideBar() {
+  const navigate = useNavigate();
   const { onSent, prevPrompts, setRecentPrompt, newChat } = useContext(Context);
+
+  const logout = async () => {
+    try {
+      const response = await axios.get(`${serverUrl}/user/logout`, {
+        withCredentials: true,
+      });
+      if (response.data.success) {
+        console.log("response of logout", response.data);
+        navigate("/");
+        // Optionally, redirect to a login page or home page
+      } else {
+        console.error("Logout failed:", response.data);
+      }
+    } catch (error) {
+      console.error("Logout request error:", error);
+    }
+  };
 
   const loadPrompt = async (prompt) => {
     setRecentPrompt(prompt);
@@ -68,9 +89,9 @@ function SideBar() {
           </div>
           <div className="flex items-center">
             <IoIosLogOut className="w-6 h-6" />
-            <Link to="/">
+            <button onClick={logout}>
               <span className="ml-2 text-gray-700">Log out</span>
-            </Link>
+            </button>
           </div>
           <div className="flex items-center">
             <button className="rounded-full py-[9px] px-[15px] bg-cyan-700 text-white">

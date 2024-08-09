@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import aiLogo from "../assets/aiLogo.png";
+const serverUrl = import.meta.env.VITE_APP_SERVER;
 
 function Signup() {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ function Signup() {
 
   const handleSignupSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:5000/signup", {
+      const response = await fetch(`${serverUrl}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

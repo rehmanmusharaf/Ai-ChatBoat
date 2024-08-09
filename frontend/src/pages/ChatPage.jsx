@@ -50,7 +50,7 @@ function ChatPage() {
           {/* Previous messages */}
           <div className="flex items-start mb-4">
             <button className="rounded-full py-[9px] px-[15px] md:mr-4 bg-cyan-700 text-white">
-              D
+              Ai CHatBoat
             </button>
             <div className="flex flex-col bg-gray-200 rounded-lg p-3 shadow-sm">
               <span className="text-gray-700">{recentPrompt}</span>

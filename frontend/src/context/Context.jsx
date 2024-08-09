@@ -1,5 +1,7 @@
+import axios from "axios";
 import React from "react";
 import { createContext, useState } from "react";
+const serverUrl = import.meta.env.VITE_APP_SERVER;
 
 // import runChat from "../../../backend/config/gemini";
 const runChat = "../../../backend/config/gemini";
@@ -30,12 +32,37 @@ const ContextProvider = (props) => {
     setShowResult(true);
     let response;
     if (prompt !== undefined) {
-      response = await runChat(prompt);
+      console.log("api End point function run !");
+      const data = await axios.post(
+        `${serverUrl}/api/gemini`,
+        { prompt: prompt },
+        { withCredentials: true }
+      );
+      console.log("data is:", data);
+      const result = data.result;
+      if (!data?.success) {
+        response = "Unable to Find The Response";
+        console.log("response is:", data);
+      }
+      response = result;
+      // response = await runChat(prompt);
       setRecentPrompt(prompt);
     } else {
+      console.log("else condition run ");
       setPrevPrompts((prev) => [...prev, input]);
       setRecentPrompt(input);
-      response = await runChat(input);
+      try {
+        const { data } = await axios.post(
+          `${serverUrl}/api/gemini`,
+          { prompt: input },
+          { withCredentials: true }
+        );
+        console.log("data of response is:", data);
+        response = data.result;
+      } catch (error) {
+        console.log("error is:", error);
+        response = error.response.data.result;
+      }
     }
 
     // Process response...
