@@ -9,7 +9,8 @@ const {
 
 const MODEL_NAME = "gemini-1.0-pro";
 // const API_KEY = "AIzaSyB8fYzQ5-8F77eNiOtZwKAIwUnu2GksD8Y";
-const API_KEY = "AIzaSyA97PKUBI1G-ejfjIW5jnCxyZWR9CNLdqQ";
+const API_KEY = process.env.API_KEY;
+// "AIzaSyA97PKUBI1G-ejfjIW5jnCxyZWR9CNLdqQ";
 
 async function runChat(res, prompt) {
   try {

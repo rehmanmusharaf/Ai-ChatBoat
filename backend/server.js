@@ -9,12 +9,6 @@ const { isAuthenticated } = require("./middleware/auth");
 const app = express();
 const cookieParser = require("cookie-parser");
 require("dotenv").config(); // Define CORS options
-// const corsOptions = {
-//   origin: "http://localhost:5173", // Allow requests from this origin
-//   methods: ["GET", "POST", "PUT", "DELETE"], // Allow these HTTP methods
-//   allowedHeaders: ["Content-Type", "Authorization"], // Allow these headers
-//   optionsSuccessStatus: 200, // Legacy support for certain browsers
-// };
 
 app.use(cookieParser()); // Add this line to enable cookie parsing
 const corsOptions = {
@@ -152,5 +146,5 @@ app.get("/user/logout", isAuthenticated, (req, res, next) => {
 // Start the server
 const port = 5000;
 app.listen(port, () => {
-  console.log(`Server is running on ${process.env.FRONTEND_URL}:${port}`);
+  console.log(`Server is running on PORT:${port}`);
 });

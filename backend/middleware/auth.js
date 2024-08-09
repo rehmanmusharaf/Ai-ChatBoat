@@ -7,13 +7,11 @@ exports.isAuthenticated = async (req, res, next) => {
     const { token } = req.cookies;
     console.log("token is", token);
     if (!token) {
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message: "Please login to countinue",
-          result: "Please login to countinue",
-        });
+      return res.status(401).json({
+        success: false,
+        message: "Please login to countinue",
+        result: "Please login to countinue",
+      });
     }
     const decoded = await jsonwebtoken.verify(
       token,
