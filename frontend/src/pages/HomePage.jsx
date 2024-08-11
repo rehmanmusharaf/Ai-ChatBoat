@@ -23,7 +23,6 @@ function HomePage() {
 
   const handleSignupClose = () => {
     navigate("/signup");
-
     // setShowSignup(false);
   };
 

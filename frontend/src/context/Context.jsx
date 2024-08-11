@@ -33,7 +33,7 @@ const ContextProvider = (props) => {
     let response;
     if (prompt !== undefined) {
       console.log("api End point function run !");
-      const data = await axios.post(
+      const { data } = await axios.post(
         `${serverUrl}/api/gemini`,
         { prompt: prompt },
         { withCredentials: true }
